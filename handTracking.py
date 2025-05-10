@@ -1,6 +1,5 @@
 import cv2 # Used to handle webcam and displaying images
 import mediapipe as mp # Used for detecting hands and drawing landmarks
-import math # To calculate the distance between fingers
 
 mp_hands = mp.solutions.hands   # Access mediapipe hand tracking model
 hands = mp_hands.Hands()    # Initialize the hand tracking model, it detect and tracks hands in video frames
@@ -8,17 +7,12 @@ mp_draw = mp.solutions.drawing_utils # Provides function to draw the hand landma
 
 cap = cv2.VideoCapture(0) # Opens default web cam (index 0), will continuously captures frames from webcam
 
-# Function to calculate distance
-def calculate_distance(f1, f2) :
-    return math.sqrt((f1.x - f2.x) ** 2 + (f1.y - f2.y) ** 2)
-
 # Define the function to recognize hand gestures with hand_landmarks (hand key points detected by Mediapipe) as parameters
 def recognize_gestures(hand_landmarks) :
     fingers = []    # Empty array to store wether each fingers is open (1) or closed (0)
     tip_ids = [4, 8, 12, 16, 20]    # This is the id of each fingers, thumb tip is at point 4, index tip is at point 8, and so on
 
     # BELOW ARE THE BASE CASE
-
     # Detect if the thumb is open or not
     # We use x axis do detect the thumb since it moves sideways
     # Below line is basically said "if thumb tip is to the left of the thumb base"
@@ -39,7 +33,6 @@ def recognize_gestures(hand_landmarks) :
     # Check the distance between thumb and index
     thumb_tip = hand_landmarks.landmark[4]
     index_tip = hand_landmarks.landmark[8]
-    distance = calculate_distance(thumb_tip, index_tip)
 
     if fingers == [1, 0, 0, 0, 0]:
         return "Thumbs Up"
